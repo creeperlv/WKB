@@ -6,16 +6,35 @@ using System.Threading.Tasks;
 
 namespace wkb.core.PageService
 {
-	public class PageComposer
+	public static class PageComposer
 	{
-		public PageComposer() { }
-		public string ComposeFile(string file, bool ExposeEnvironmentVariables = false)
+		public static string ComposeFile(string file, ComposeCompound compound, bool ExposeEnvironmentVariables = false)
 		{
-			return Compose(File.ReadAllText(file), ExposeEnvironmentVariables);
+			return Compose(File.ReadAllText(file), compound, ExposeEnvironmentVariables);
 		}
-		public string Compose(string pageContent, bool ExposeEnvironmentVariables = false)
+		public static string Compose(string pageContent, ComposeCompound compound, bool ExposeEnvironmentVariables = false)
 		{
 			return pageContent;
 		}
+	}
+	public class ComposeCompound
+	{
+		public Dictionary<string, string> Variables = [];
+		public string TryGetVariable(string key, bool useEnvironmentVariable = false)
+		{
+			if (Variables.TryGetValue(key, out var vv))
+			{
+				return vv;
+			}
+			if (useEnvironmentVariable)
+			{
+				return Environment.GetEnvironmentVariable(key) ?? key;
+			}
+			return key;
+		}
+	}
+	public enum PageTypes
+	{
+		WikiPage, ConfigurationHost, ConfigurationPage
 	}
 }
