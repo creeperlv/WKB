@@ -19,13 +19,13 @@ namespace wkb.core.HttpService
 			this.configService = configService;
 			OnNewHttpRequest.Add((context) =>
 			{
-				if (this.configService.Configuration.EnableAccessLog)
+				if (this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.EnableAccessLog, true))
 					Trace.WriteLine($"{context.Request.RemoteEndPoint.Address}:{context.Request.RemoteEndPoint.Port}>{context.Request.HttpMethod}:{context.Request.Url}");
 				return false;
 			});
 			OnNewHttpRequest.Add((context) =>
 			{
-				if (!configService.Configuration.IsConfigured)
+				if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false))
 				{
 					if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
 					{
@@ -41,7 +41,7 @@ namespace wkb.core.HttpService
 		public void Start()
 		{
 			HttpListener httpListener = new HttpListener();
-			configService.Configuration.Prefixes.ForEach(x =>
+			configService.Configuration.TryGetConfigAsList(WkbConfigurationKeys.Prefix).ForEach(x =>
 			{
 				if (!x.EndsWith("/"))
 				{

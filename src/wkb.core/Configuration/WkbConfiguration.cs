@@ -58,7 +58,7 @@ namespace wkb.core.Configuration
 		}
 		public void Apply()
 		{
-			if (Configuration.OutputLogToConsole)
+			if (Configuration.TryGetConfig<bool>(WkbConfigurationKeys.OutputLogToConsole, true))
 			{
 				Trace.Listeners.Add(new ConsoleTraceListener());
 			}
@@ -75,16 +75,49 @@ namespace wkb.core.Configuration
 	[Serializable]
 	public class WkbConfiguration
 	{
-		public bool IsConfigured { get; set; } = false;
-		public bool EnableAccessLog { get; set; } = true;
-		public bool OutputLogToConsole { get; set; } = true;
-		public List<string> Prefixes { get; set; } = ["127.0.0.1:8080"];
-		public string Title { get; set; } = "WKB";
-		public DataStore UserData { get; set; }
-		public bool IsLocalizationEnabled { get; set; }
-		public bool IsUsingGit { get; set; }
-		public bool UsingGitCommandInsteadOfLibGit2Sharp { get; set; }
-		public string KBPath { get; set; } = "./kb/";
+		public Dictionary<string, string> Configuration { get; set; } = new Dictionary<string, string>(){
+			{ WkbConfigurationKeys.Prefix,"127.0.0.1:8080"}
+			};
+		public string TryGetConfig(string key, string fallback = "")
+		{
+			if (Configuration.TryGetValue(key, out var value))
+			{
+				return value;
+			}
+			return fallback;
+		}
+		public List<string> TryGetConfigAsList(string key)
+		{
+			if (Configuration.TryGetValue(key, out var value))
+			{
+				var seg = value.Split(',');
+				var L = new List<string>(seg.Length);
+				foreach (var kv in seg)
+				{
+					L.Add(kv.Trim());
+				}
+				return L;
+			}
+			return [];
+		}
+		public T TryGetConfig<T>(string key, T fallback) where T : IParsable<T>
+		{
+			if (Configuration.TryGetValue(key, out var value))
+			{
+				if (T.TryParse(value, null, out var result))
+				{
+					return result;
+				}
+			}
+			return fallback;
+		}
+	}
+	public class WkbConfigurationKeys
+	{
+		public const string Prefix = "Prefixes";
+		public const string IsConfigured = "IsConfigured";
+		public const string EnableAccessLog = "EnableAccessLog";
+		public const string OutputLogToConsole = "OutputLogToConsole";
 	}
 	public enum DataStore
 	{
