@@ -9,8 +9,15 @@ namespace wkb.core.UserService
 	[Serializable]
 	public class User
 	{
-		public string DisplayName { get;set;}="User";
-		public string Email { get;set;}="null@example.com";
-		public string PasswordHash { get;set;}="";
+		public string DisplayName { get; set; } = "User";
+		public string Email { get; set; } = "null@example.com";
+		public string PasswordHash { get; set; } = "";
+	}
+	public class UserRepo
+	{
+		public void Register(string username, string email, string passwordHash)
+		{
+
+		}
 	}
 }

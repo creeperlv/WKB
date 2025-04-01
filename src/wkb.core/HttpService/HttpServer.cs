@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using wkb.core.ApiService;
 using wkb.core.Configuration;
 
 namespace wkb.core.HttpService
@@ -12,11 +13,13 @@ namespace wkb.core.HttpService
 	public class HttpServer
 	{
 		public ConfigurationService configService;
+		public WkbCore core;
 		CancellationToken cancellationToken = new CancellationToken();
 		public List<Func<HttpListenerContext, bool>> OnNewHttpRequest = new List<Func<HttpListenerContext, bool>>();
-		public HttpServer(ConfigurationService configService)
+		public HttpServer(WkbCore core)
 		{
-			this.configService = configService;
+			this.core = core;
+			this.configService = core.configurationService;
 			OnNewHttpRequest.Add((context) =>
 			{
 				if (this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.EnableAccessLog, true))
@@ -25,22 +28,44 @@ namespace wkb.core.HttpService
 			});
 			OnNewHttpRequest.Add((context) =>
 			{
-				if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false))
+				if (context.Request.Url?.LocalPath == "/")
 				{
-					if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
+					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false))
 					{
+						if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
+						{
 
+							return true;
+						}
+						else
+							context.Response.Redirect("/firstSetup");
+						return true;
 					}
-					else
-						context.Response.Redirect("/firstSetup");
-
+					context.Response.Redirect("/content/index");
+					return true;
 				}
-				return true;
+				if (context.Request.Url?.LocalPath.StartsWith("/content/") ?? false)
+				{
+					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false))
+					{
+						if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
+						{
+							return true;
+						}
+						else
+							context.Response.Redirect("/firstSetup");
+						return true;
+					}
+					return true;
+				}
+				return false;
+
 			});
+			OnNewHttpRequest.Add(core.apiHub.Process);
 		}
 		public void Start()
 		{
-			HttpListener httpListener = new HttpListener();
+			HttpListener httpListener = new();
 			configService.Configuration.TryGetConfigAsList(WkbConfigurationKeys.Prefix).ForEach(x =>
 			{
 				if (!x.EndsWith("/"))
