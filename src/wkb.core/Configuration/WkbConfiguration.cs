@@ -112,13 +112,6 @@ namespace wkb.core.Configuration
 			return fallback;
 		}
 	}
-	public class WkbConfigurationKeys
-	{
-		public const string Prefix = "Prefixes";
-		public const string IsConfigured = "IsConfigured";
-		public const string EnableAccessLog = "EnableAccessLog";
-		public const string OutputLogToConsole = "OutputLogToConsole";
-	}
 	public enum DataStore
 	{
 		NoDataBase,

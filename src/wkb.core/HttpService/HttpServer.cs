@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using wkb.core.ApiService;
 using wkb.core.Configuration;
+using wkb.core.PageService;
 
 namespace wkb.core.HttpService
 {
@@ -30,7 +31,7 @@ namespace wkb.core.HttpService
 			{
 				if (context.Request.Url?.LocalPath == "/")
 				{
-					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false))
+					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false)&& this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.AdvancedServer, false))
 					{
 						if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
 						{
@@ -46,7 +47,7 @@ namespace wkb.core.HttpService
 				}
 				if (context.Request.Url?.LocalPath.StartsWith("/content/") ?? false)
 				{
-					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false))
+					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false) && this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.AdvancedServer, false))
 					{
 						if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
 						{
@@ -56,6 +57,8 @@ namespace wkb.core.HttpService
 							context.Response.Redirect("/firstSetup");
 						return true;
 					}
+					var path=context.Request.Url?.LocalPath["/content/".Length..];
+					core.pageEngine.ServeMarkdownPage(path);
 					return true;
 				}
 				return false;

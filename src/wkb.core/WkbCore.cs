@@ -16,7 +16,8 @@ public class WkbCore
 		this.apiHub = new ApiHub(this);
 		AuthenticationAPI api = new AuthenticationAPI(this);
 		api.SetupAll();
-		pageEngine=new PageEngine();
+		pageEngine = new PageEngine(this.configurationService);
+		pageEngine.RegisterProvider(PageTypes.WikiPage, new WikiPageProvider(this));
 	}
 	public void Start()
 	{
