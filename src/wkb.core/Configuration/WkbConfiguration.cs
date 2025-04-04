@@ -13,6 +13,7 @@ namespace wkb.core.Configuration
 		public string configFileName = "wkb.conf";
 		public string ConfigurationFile;
 		public WkbConfiguration Configuration;
+		public List<Action> OnApplyConfiguration = [];
 		string DetermineConfigurationFilePath()
 		{
 			if (File.Exists(configFileName))
@@ -56,11 +57,23 @@ namespace wkb.core.Configuration
 			}
 			Apply();
 		}
+		ConsoleTraceListener Listener = new ConsoleTraceListener();
 		public void Apply()
 		{
 			if (Configuration.TryGetConfig<bool>(WkbConfigurationKeys.OutputLogToConsole, true))
 			{
-				Trace.Listeners.Add(new ConsoleTraceListener());
+				Trace.Listeners.Add(Listener);
+			}
+			else
+			{
+				if (Trace.Listeners.Contains(Listener))
+				{
+					Trace.Listeners.Remove(Listener);
+				}
+			}
+			foreach (var item in OnApplyConfiguration)
+			{
+				item();
 			}
 		}
 		public void Save()

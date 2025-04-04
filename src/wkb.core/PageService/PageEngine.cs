@@ -47,13 +47,36 @@ namespace wkb.core.PageService
 	public class WikiPageProvider : IPageProvider
 	{
 		public WkbCore core;
+		Templator templator;
+		string ContentPath = "./wwwroot/";
 		public WikiPageProvider(WkbCore core)
 		{
 			this.core = core;
+			templator = new Templator(core);
+			core.configurationService.OnApplyConfiguration.Add(Configure);
+			Configure();
 		}
+		~WikiPageProvider()
+		{
+			if (core.configurationService.OnApplyConfiguration.Contains(Configure))
+				core.configurationService.OnApplyConfiguration.Remove(Configure);
+		}
+		void Configure()
+		{
 
+		}
 		public string ObtainPage(PageTarget target)
 		{
+			var file = templator.FindFile(TemplateFiles.wikiDesktopView);
+			var content = File.ReadAllText(file);
+			File.ReadAllText(target.ProcessedURL);
+			return PageComposer.Compose(content, new ComposeCompound()
+			{
+				Variables = new Dictionary<string, string>()
+				{
+					{"WIKI_CONTENT","" }
+				}
+			});
 		}
 	}
 }
