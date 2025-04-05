@@ -26,7 +26,11 @@
 			border: none;
 			width: 78%;
 		}
-
+		img{
+			width: 95%;
+			margin-left:2.5%;
+			margin-right:2.5%;
+		}
 		.menudiv:hover {
 			top: 15px;
 			bottom: 25px;

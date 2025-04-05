@@ -88,9 +88,15 @@ namespace wkb.core.PageService
 					sb.Append(PageComposer.Compose(FolderItemTemplate, compound));
 				}
 			}
+			StringBuilder Files = new StringBuilder();
 			foreach (var file in files)
 			{
 				if (file.Name.EndsWith(".info")) continue;
+				if (!(file.Name.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase) ||
+					file.Name.EndsWith(".txt", StringComparison.InvariantCultureIgnoreCase)))
+				{
+					continue;
+				}
 				if (file.Name.StartsWith("index.", StringComparison.InvariantCultureIgnoreCase))
 				{
 					var infoFile = Path.Combine(parent.FullName, ".info");
@@ -115,24 +121,25 @@ namespace wkb.core.PageService
 					{
 						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = File.ReadAllText(InfoFile);
-						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
+						Files.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 					else
 					if (file.Name.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
 					{
 						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = file.Name.Substring(0, file.Name.Length - 3);
-						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
+						Files.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 					else
 					{
 
 						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = file.Name;
-						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
+						Files.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 				}
 			}
+			sb.Append(Files);
 			return sb.ToString();
 		}
 
@@ -163,13 +170,22 @@ namespace wkb.core.PageService
 			}
 			var md = File.ReadAllText(path);
 			MarkdownDocument markdownDocument = Markdown.Parse(md);
-
+			var infoFile = path + ".info";
+			string title = "";
+			if (File.Exists(infoFile))
+			{
+				title = File.ReadAllText(infoFile);
+			}
+			else
+			{
+				title = md.Substring(markdownDocument.First().Span.Start, markdownDocument.First().Span.Length).TrimStart('#').Trim();
+			}
 			string l = markdownDocument.ToHtml();
 			compound = new ComposeCompound()
 			{
 				Variables = new Dictionary<string, string>()
 				{
-					{ "TITLE",md.Substring(markdownDocument.First().Span.Start,markdownDocument.First().Span.Length).TrimStart('#').Trim()},
+					{ "TITLE",title},
 					{"WIKI_CONTENT",l },
 					{"WIKI_NAVBAR",GenerateFolderStructure(target,path)}
 				}

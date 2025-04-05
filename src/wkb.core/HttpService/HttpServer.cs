@@ -77,6 +77,7 @@ namespace wkb.core.HttpService
 
 			});
 			OnNewHttpRequest.Add(core.apiHub.Process);
+			OnNewHttpRequest.Add(core.rfs.Process);
 		}
 		public void Start()
 		{
@@ -108,19 +109,40 @@ namespace wkb.core.HttpService
 					var context = task.Result;
 					if (context is not null)
 					{
-						foreach (var item in OnNewHttpRequest)
+						Task.Run(() =>
 						{
-							if (item(context))
+							try
 							{
-								break;
+								foreach (var item in OnNewHttpRequest)
+								{
+									if (item(context))
+									{
+										break;
+									}
+								}
+								context.Response.Close();
 							}
-						}
-						context.Response.Close();
+							catch (Exception e)
+							{
+								Trace.WriteLine(e);
+							}
+							finally
+							{
+								try
+								{
+									context.Response.StatusCode=500;
+								}
+								catch (Exception)
+								{
+								}
+								context.Response.Close();
+							}
+						});
 					}
 				}
-				catch (Exception)
+				catch (Exception e)
 				{
-					break;
+					Trace.WriteLine(e);
 				}
 			}
 		}

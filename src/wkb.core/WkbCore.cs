@@ -10,6 +10,7 @@ public class WkbCore
 	public ConfigurationService configurationService;
 	public ApiHub apiHub;
 	public PageEngine pageEngine;
+	public RawFileService rfs;
 	public WkbCore(ConfigurationService configurationService)
 	{
 		this.configurationService = configurationService;
@@ -17,6 +18,7 @@ public class WkbCore
 		AuthenticationAPI api = new AuthenticationAPI(this);
 		api.SetupAll();
 		pageEngine = new PageEngine(this.configurationService);
+		rfs = new RawFileService(this);
 		pageEngine.RegisterProvider(PageTypes.WikiPage, new WikiPageProvider(this));
 	}
 	public void Start()
