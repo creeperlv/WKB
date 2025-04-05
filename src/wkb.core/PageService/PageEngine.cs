@@ -1,6 +1,4 @@
-﻿using Markdig;
-using System.Diagnostics;
-using System.Net;
+﻿using System.Net;
 using wkb.core.Configuration;
 
 namespace wkb.core.PageService
@@ -45,58 +43,5 @@ namespace wkb.core.PageService
 	public interface IPageProvider
 	{
 		string ObtainPage(PageTarget target);
-	}
-	public class WikiPageProvider : IPageProvider
-	{
-		public WkbCore core;
-		Templator templator;
-		string ContentPath = "./wwwroot/";
-		public WikiPageProvider(WkbCore core)
-		{
-			this.core = core;
-			templator = new Templator(core);
-			core.configurationService.OnApplyConfiguration.Add(Configure);
-			Configure();
-		}
-		~WikiPageProvider()
-		{
-			if (core.configurationService.OnApplyConfiguration.Contains(Configure))
-				core.configurationService.OnApplyConfiguration.Remove(Configure);
-		}
-		void Configure()
-		{
-
-		}
-		public string ObtainPage(PageTarget target)
-		{
-			string path = Path.Combine(ContentPath, target.ProcessedURL);
-			if (Directory.Exists(path))
-			{
-				target.context.Response.Redirect("./index.md");
-			}
-			var file = templator.FindFile(TemplateFiles.wikiDesktopView);
-			var content = File.ReadAllText(file);
-			Trace.WriteLine(path);
-			if (!File.Exists(path))
-			{
-
-				return PageComposer.Compose(content, new ComposeCompound()
-				{
-					Variables = new Dictionary<string, string>()
-				{
-					{"WIKI_CONTENT","Document not found!" }
-				}
-				});
-			}
-			var md = File.ReadAllText(path);
-			var l = Markdig.Markdown.Parse(md).ToHtml();
-			return PageComposer.Compose(content, new ComposeCompound()
-			{
-				Variables = new Dictionary<string, string>()
-				{
-					{"WIKI_CONTENT",l }
-				}
-			});
-		}
 	}
 }
