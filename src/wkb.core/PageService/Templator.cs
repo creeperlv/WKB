@@ -32,9 +32,20 @@ namespace wkb.core.PageService
 		{
 			return Path.Combine(basePath, name);
 		}
+		public string GetTemplate(string name)
+		{
+			var file = FindFile(name);
+			if (File.Exists(file))
+			{
+				return File.ReadAllText(file);
+			}
+			return "";
+		}
 	}
 	internal static class TemplateFiles
 	{
 		internal const string wikiDesktopView = "wikiDesktopView.template";
+		internal const string NavBarFolder = "Items/NavBarFolderItem.template";
+		internal const string NavBarFile = "Items/NavBarFileItem.template";
 	}
 }

@@ -38,7 +38,15 @@
 		$WIKI_NAVBAR
 	</div>
 	<div class="MainContent">
+		<div class="AccentCardDiv">
+			<p class="t2">$TITLE</p>
+		</div>
+		<div class="cardDiv">
 		$WIKI_CONTENT
+		</div>
+		<div class="cardDiv">
+			<p>Generated in $COMPOSE_TIME ms.</p>
+		</div>
 	</div>
 </body>
 </html>

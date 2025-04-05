@@ -1,6 +1,7 @@
 ﻿using Markdig;
 using Markdig.Syntax;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Text;
 using wkb.core.Configuration;
 
@@ -40,6 +41,8 @@ namespace wkb.core.PageService
 		{
 			FileInfo fileInfo = new FileInfo(path);
 
+			var FileItemTemplate = templator.GetTemplate(TemplateFiles.NavBarFile);
+			var FolderItemTemplate = templator.GetTemplate(TemplateFiles.NavBarFolder);
 			var parent = fileInfo.Directory;
 			if (parent is null)
 			{
@@ -48,53 +51,80 @@ namespace wkb.core.PageService
 			var dirs = parent.EnumerateDirectories();
 			var files = parent.EnumerateFiles();
 			StringBuilder sb = new StringBuilder();
+			var compound = new ComposeCompound() { Variables = { { "ITEM_URL", "" }, { "ITEM_NAME", "" } } };
 			if (parent.FullName != ContentPath)
 			{
-				sb.Append($"<a href=\"../\"/><li><span class=\"iconify\" data-icon=\"mdi-folder-outline\"></span>..</li></a>");
-
+				compound.Variables["ITEM_URL"] = "../";
+				compound.Variables["ITEM_NAME"] = "..";
+				sb.Append(PageComposer.Compose(FolderItemTemplate, compound));
 			}
 			foreach (var dir in dirs)
 			{
 				var infoFile = Path.Combine(dir.FullName, ".info");
 				if (File.Exists(infoFile))
 				{
-					sb.Append($"<a href=\"{dir.Name}/\"/><li><span class=\"iconify\" data-icon=\"mdi-folder-outline\"></span>{File.ReadAllText(infoFile)}</li></a>");
+					compound.Variables["ITEM_URL"] = $"{dir.Name}/";
+					compound.Variables["ITEM_NAME"] = File.ReadAllText(infoFile);
+					sb.Append(PageComposer.Compose(FolderItemTemplate, compound));
 				}
 				else
 				{
-					sb.Append($"<a href=\"{dir.Name}/\"/><li><span class=\"iconify\" data-icon=\"mdi-folder-outline\"></span>{dir.Name}</li></a>");
+					compound.Variables["ITEM_URL"] = $"{dir.Name}/";
+					compound.Variables["ITEM_NAME"] = dir.Name;
+					sb.Append(PageComposer.Compose(FolderItemTemplate, compound));
 				}
 			}
 			foreach (var file in files)
 			{
-				if (file.Name == ".info") continue;
+				if (file.Name.EndsWith(".info")) continue;
 				if (file.Name.StartsWith("index.", StringComparison.InvariantCultureIgnoreCase))
 				{
 					var infoFile = Path.Combine(parent.FullName, ".info");
 					if (File.Exists(infoFile))
 					{
-						sb.Append($"<a href=\"{file.Name}\"/><li>{File.ReadAllText(infoFile)}</li></a>");
+						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_NAME"] = File.ReadAllText(infoFile);
+						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 					else
 					{
-						sb.Append($"<a href=\"{file.Name}\"/><li>{parent.Name}</li></a>");
+						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_NAME"] = parent.Name;
+						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 
 				}
 				else
 				{
-					if (file.Name.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
+					var InfoFile = file.FullName + ".info";
+					if (File.Exists(InfoFile))
 					{
-						sb.Append($"<a href=\"{file.Name}\"/><li>{file.Name.Substring(0, file.Name.Length - 3)}</li></a>");
+						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_NAME"] = File.ReadAllText(InfoFile);
+						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 					else
-						sb.Append($"<a href=\"{file.Name}\"/><li>{file.Name}</li></a>");
+					if (file.Name.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
+					{
+						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_NAME"] = file.Name.Substring(0, file.Name.Length - 3);
+						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
+					}
+					else
+					{
+
+						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_NAME"] = file.Name;
+						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
+					}
 				}
 			}
 			return sb.ToString();
 		}
 		public string ObtainPage(PageTarget target)
 		{
+			Stopwatch sw = Stopwatch.StartNew();
+			ComposeCompound compound;
 			string path = Path.Combine(ContentPath, target.ProcessedURL);
 			if (Directory.Exists(path))
 			{
@@ -106,27 +136,39 @@ namespace wkb.core.PageService
 			if (!File.Exists(path))
 			{
 
-				return PageComposer.Compose(content, new ComposeCompound()
+				compound = new ComposeCompound()
 				{
 					Variables = new Dictionary<string, string>()
-				{
-					{"WIKI_CONTENT","Document not found!" },
-					{"WIKI_NAVBAR",GenerateFolderStructure(target,path)}
-				}
-				});
+					{
+						{ "TITLE","Not found!"},
+						{"WIKI_CONTENT","Document not found!" },
+						{"WIKI_NAVBAR",GenerateFolderStructure(target,path)}
+					}
+				};
+				goto END;
 			}
 			var md = File.ReadAllText(path);
 			MarkdownDocument markdownDocument = Markdown.Parse(md);
 
 			string l = markdownDocument.ToHtml();
-
-			return PageComposer.Compose(content, new ComposeCompound()
+			compound = new ComposeCompound()
 			{
 				Variables = new Dictionary<string, string>()
 				{
 					{ "TITLE",md.Substring(markdownDocument.First().Span.Start,markdownDocument.First().Span.Length).TrimStart('#').Trim()},
 					{"WIKI_CONTENT",l },
 					{"WIKI_NAVBAR",GenerateFolderStructure(target,path)}
+				}
+			};
+		END:
+			string pageContent = PageComposer.Compose(content, compound);
+			TimeSpan elapsed = sw.Elapsed;
+			sw.Stop();
+			return PageComposer.Compose(pageContent, new ComposeCompound()
+			{
+				Variables = new Dictionary<string, string>()
+				{
+					{ "COMPOSE_TIME",$"{elapsed.TotalMilliseconds}"},
 				}
 			});
 		}

@@ -15,6 +15,12 @@
     <None Update="Templates\firstRun.template">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Templates\Items\NavBarFileItem.template">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Templates\Items\NavBarFolderItem.template">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\wikiDesktopView.template">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
