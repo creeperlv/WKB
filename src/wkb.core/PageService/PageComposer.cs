@@ -14,6 +14,18 @@ namespace wkb.core.PageService
 		}
 		public static string Compose(string pageContent, ComposeCompound compound, bool ExposeEnvironmentVariables = false)
 		{
+			foreach (var item in compound.Variables.Keys)
+			{
+				pageContent = pageContent.Replace($"${item}", compound.Variables[item]);
+			}
+			if (ExposeEnvironmentVariables)
+			{
+				var ENV = Environment.GetEnvironmentVariables();
+				foreach (var item in ENV.Keys)
+				{
+					pageContent = pageContent.Replace($"${item}", ENV[item]?.ToString() ?? "");
+				}
+			}
 			return pageContent;
 		}
 	}

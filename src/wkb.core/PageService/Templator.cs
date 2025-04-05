@@ -19,7 +19,14 @@ namespace wkb.core.PageService
 		}
 		void Configure()
 		{
-			basePath = this.core.configurationService.Configuration.TryGetConfig(WkbConfigurationKeys.TemplateLocation, Environment.ProcessPath ?? ".");
+			if (Environment.ProcessPath is not null)
+			{
+				FileInfo di = new FileInfo(Environment.ProcessPath);
+
+				basePath = this.core.configurationService.Configuration.TryGetConfig(WkbConfigurationKeys.TemplateLocation, Path.Combine(di.Directory?.FullName ?? ".", "Templates"));
+			}
+			else
+				basePath = this.core.configurationService.Configuration.TryGetConfig(WkbConfigurationKeys.TemplateLocation, "./Templates");
 		}
 		public string FindFile(string name)
 		{

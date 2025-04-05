@@ -31,7 +31,7 @@ namespace wkb.core.HttpService
 			{
 				if (context.Request.Url?.LocalPath == "/")
 				{
-					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false)&& this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.AdvancedServer, false))
+					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false) && this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.AdvancedServer, false))
 					{
 						if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
 						{
@@ -42,7 +42,7 @@ namespace wkb.core.HttpService
 							context.Response.Redirect("/firstSetup");
 						return true;
 					}
-					context.Response.Redirect("/content/index");
+					context.Response.Redirect("/content/index.md");
 					return true;
 				}
 				if (context.Request.Url?.LocalPath.StartsWith("/content/") ?? false)
@@ -57,8 +57,12 @@ namespace wkb.core.HttpService
 							context.Response.Redirect("/firstSetup");
 						return true;
 					}
-					var path=context.Request.Url?.LocalPath["/content/".Length..];
-					core.pageEngine.ServeMarkdownPage(path);
+					var path = context.Request.Url?.LocalPath["/content/".Length..];
+					var content = core.pageEngine.ServeWikiPage(context, path ?? "index.md");
+					var data = Encoding.UTF8.GetBytes(content);
+					context.Response.OutputStream.Write(data);
+					context.Response.OutputStream.Flush();
+					context.Response.OutputStream.Close();
 					return true;
 				}
 				return false;

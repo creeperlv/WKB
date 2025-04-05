@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using Markdig;
+using System.Diagnostics;
+using System.Net;
 using wkb.core.Configuration;
 
 namespace wkb.core.PageService
@@ -24,7 +26,7 @@ namespace wkb.core.PageService
 		{
 			if (Providers.TryGetValue(PageTypes.WikiPage, out var provider))
 			{
-				provider.ObtainPage(new PageTarget(context, path));
+				return provider.ObtainPage(new PageTarget(context, path));
 			}
 			return "<html><body><h1>The server is not configured correctly";
 		}
@@ -67,14 +69,32 @@ namespace wkb.core.PageService
 		}
 		public string ObtainPage(PageTarget target)
 		{
+			string path = Path.Combine(ContentPath, target.ProcessedURL);
+			if (Directory.Exists(path))
+			{
+				target.context.Response.Redirect("./index.md");
+			}
 			var file = templator.FindFile(TemplateFiles.wikiDesktopView);
 			var content = File.ReadAllText(file);
-			File.ReadAllText(target.ProcessedURL);
+			Trace.WriteLine(path);
+			if (!File.Exists(path))
+			{
+
+				return PageComposer.Compose(content, new ComposeCompound()
+				{
+					Variables = new Dictionary<string, string>()
+				{
+					{"WIKI_CONTENT","Document not found!" }
+				}
+				});
+			}
+			var md = File.ReadAllText(path);
+			var l = Markdig.Markdown.Parse(md).ToHtml();
 			return PageComposer.Compose(content, new ComposeCompound()
 			{
 				Variables = new Dictionary<string, string>()
 				{
-					{"WIKI_CONTENT","" }
+					{"WIKI_CONTENT",l }
 				}
 			});
 		}
