@@ -58,9 +58,17 @@ namespace wkb.core.HttpService
 						return true;
 					}
 					var path = context.Request.Url?.LocalPath["/content/".Length..];
-					var content = core.pageEngine.ServeWikiPage(context, path ?? "index.md");
-					var data = Encoding.UTF8.GetBytes(content);
-					context.Response.OutputStream.Write(data);
+					try
+					{
+						var content = core.pageEngine.ServeWikiPage(context, path ?? "index.md");
+						var data = Encoding.UTF8.GetBytes(content);
+						context.Response.OutputStream.Write(data);
+					}
+					catch (Exception e)
+					{
+						var data = Encoding.UTF8.GetBytes($"<html><body><h1>Internal Server Error</h1><p>{e}</p>");
+						context.Response.OutputStream.Write(data);
+					}
 					context.Response.OutputStream.Flush();
 					context.Response.OutputStream.Close();
 					return true;

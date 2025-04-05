@@ -48,6 +48,20 @@ namespace wkb.core.PageService
 			{
 				return "Sorry, got lost.";
 			}
+			if (parent.Exists)
+				return ListFolder(FileItemTemplate, FolderItemTemplate, parent);
+			else if (parent.Parent is not null)
+			{
+				if (parent.Parent.Exists)
+					return ListFolder(FileItemTemplate, FolderItemTemplate, parent.Parent);
+				else
+					return "Sorry, got lost.";
+			}
+			return "Sorry, got lost.";
+		}
+
+		private string ListFolder(string FileItemTemplate, string FolderItemTemplate, DirectoryInfo parent)
+		{
 			var dirs = parent.EnumerateDirectories();
 			var files = parent.EnumerateFiles();
 			StringBuilder sb = new StringBuilder();
@@ -82,13 +96,13 @@ namespace wkb.core.PageService
 					var infoFile = Path.Combine(parent.FullName, ".info");
 					if (File.Exists(infoFile))
 					{
-						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = File.ReadAllText(infoFile);
 						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 					else
 					{
-						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = parent.Name;
 						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
@@ -99,21 +113,21 @@ namespace wkb.core.PageService
 					var InfoFile = file.FullName + ".info";
 					if (File.Exists(InfoFile))
 					{
-						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = File.ReadAllText(InfoFile);
 						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 					else
 					if (file.Name.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
 					{
-						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = file.Name.Substring(0, file.Name.Length - 3);
 						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
 					else
 					{
 
-						compound.Variables["ITEM_URL"] = $"{file.Name}/";
+						compound.Variables["ITEM_URL"] = $"{file.Name}";
 						compound.Variables["ITEM_NAME"] = file.Name;
 						sb.Append(PageComposer.Compose(FileItemTemplate, compound));
 					}
@@ -121,6 +135,7 @@ namespace wkb.core.PageService
 			}
 			return sb.ToString();
 		}
+
 		public string ObtainPage(PageTarget target)
 		{
 			Stopwatch sw = Stopwatch.StartNew();
@@ -135,7 +150,6 @@ namespace wkb.core.PageService
 			Trace.WriteLine(path);
 			if (!File.Exists(path))
 			{
-
 				compound = new ComposeCompound()
 				{
 					Variables = new Dictionary<string, string>()
