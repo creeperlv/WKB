@@ -168,6 +168,8 @@ namespace wkb.core.PageService
 				};
 				goto END;
 			}
+			FileInfo fi = new FileInfo(path);
+
 			var md = File.ReadAllText(path);
 			MarkdownDocument markdownDocument = Markdown.Parse(md);
 			var infoFile = path + ".info";
@@ -186,8 +188,10 @@ namespace wkb.core.PageService
 				Variables = new Dictionary<string, string>()
 				{
 					{ "TITLE",title},
-					{"WIKI_CONTENT",l },
-					{"WIKI_NAVBAR",GenerateFolderStructure(target,path)}
+					{ "CREATE_TIME",fi.CreationTime.ToLongDateString()},
+					{ "MODIFY_TIME",fi.LastWriteTime.ToLongDateString()},
+					{ "WIKI_CONTENT",l },
+					{ "WIKI_NAVBAR",GenerateFolderStructure(target,path)}
 				}
 			};
 		END:

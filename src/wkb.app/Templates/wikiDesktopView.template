@@ -5,10 +5,13 @@
 	<script src="//code.iconify.design/1/1.0.6/iconify.min.js"></script>
 	<link href="https://creeperlv.github.io/Styles/cldesignv2/cldesignv2.css" rel="stylesheet">
 	<style>
+		body{
+			transition-duration: 0.4s;
+		}
 		.menudiv {
 			visibility: visible;
 			transition-duration: 0.4s;
-			position: absolute;
+			position: fixed;
 			top:20px;
 			left: 1%;
 			bottom: 20px;
@@ -18,7 +21,6 @@
 			padding: 5px;
 			box-shadow: #111 0px 10px 15px 1px;
 		}
-
 		.MainContent {
 			transition-duration: 0.4s;
 			margin-left: 17%;
@@ -35,6 +37,55 @@
 			top: 15px;
 			bottom: 25px;
 		}
+		@media print{
+		
+			.menudiv {
+				visibility: collapse;
+			}
+			.MainContent {
+				transition-duration: 0.4s;
+				margin-left: 0%;
+				padding: 0 px;
+				border: none;
+				width: 100%;
+			}
+			.AccentCardDiv{
+				background: #FFF;
+				box-shadow: #fff 0px 0px 0px 0px;
+				padding: 0px;
+				margin: 0px;
+			}
+			.AccentCardDiv:hover {
+				background: #FFF;
+				box-shadow: #fff 0px 0px 0px 0px;
+				padding: 0px;
+				margin: 0px;
+			}
+			.cardDiv{
+				background: #FFF;
+				box-shadow: #fff 0px 0px 0px 0px;
+				padding: 0px;
+				margin: 0px;
+			}
+			.cardDiv:hover {
+				background: #FFF;
+				box-shadow: #fff 0px 0px 0px 0px;
+				padding: 0px;
+				margin: 0px;
+			}
+			p{
+				color:black;
+			}
+			P{
+				color:black;
+			}
+			h1{
+				color:black;
+			}
+			.hiddenWithPrint{
+				visibility: collapse;
+			}
+		}
 	</style>
 </head>
 <body>
@@ -42,13 +93,16 @@
 		$WIKI_NAVBAR
 	</div>
 	<div class="MainContent">
-		<div class="AccentCardDiv">
-			<p class="t2">$TITLE</p>
+		<div class="AccentCardDiv" id="TitleDiv">
+			<p class="t2" id="Title">$TITLE</p>
+		</div>
+		<div class="cardDiv">
+			<p>Created at: $CREATE_TIME Last Modify: $MODIFY_TIME</p>
 		</div>
 		<div class="cardDiv">
 		$WIKI_CONTENT
 		</div>
-		<div class="cardDiv">
+		<div class="cardDiv hiddenWithPrint">
 			<p>Generated in $COMPOSE_TIME ms.</p>
 		</div>
 	</div>
