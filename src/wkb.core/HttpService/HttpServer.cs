@@ -62,11 +62,13 @@ namespace wkb.core.HttpService
 					{
 						var content = core.pageEngine.ServeWikiPage(context, path ?? "index.md");
 						var data = Encoding.UTF8.GetBytes(content);
+						context.Response.ContentEncoding = Encoding.UTF8;
 						context.Response.OutputStream.Write(data);
 					}
 					catch (Exception e)
 					{
 						var data = Encoding.UTF8.GetBytes($"<html><body><h1>Internal Server Error</h1><p>{e}</p>");
+						context.Response.ContentEncoding = Encoding.UTF8;
 						context.Response.OutputStream.Write(data);
 					}
 					context.Response.OutputStream.Flush();
