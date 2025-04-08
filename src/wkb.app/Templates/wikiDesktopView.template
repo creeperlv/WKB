@@ -5,7 +5,23 @@
 	<script src="//code.iconify.design/1/1.0.6/iconify.min.js"></script>
 	<link href="https://creeperlv.github.io/Styles/cldesignv2/cldesignv2.css" rel="stylesheet">
 	<style>
+		code {
+			color: #F94;
+			background: #444;
+			padding: 2px 5px;
+			border-radius: 5px;
+			border: 1px solid #666;
+		}
+		pre>code {
+			color: white;
+			background: none;
+			padding: unset;
+			border-radius: 0px;
+			border: none;
+		}
 		body{
+			-webkit-print-color-adjust:exact !important;
+			print-color-adjust:exact !important;
 			transition-duration: 0.4s;
 		}
 		.menudiv {
@@ -42,6 +58,20 @@
 			border-collapse: collapse;
 		}
 		@media print{
+			code {
+				color: #841;
+				background: #E8E8E8;
+				padding: 2px 5px;
+				border-radius: 5px;
+				border: 1px solid #DDD;
+			}
+			pre>code {
+				color: black;
+				background: none;
+				padding: unset;
+				border-radius: 0px;
+				border: none;
+			}
 			table, th, td {
 				border: 1px solid black;
 				border-collapse: collapse;
