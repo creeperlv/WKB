@@ -1,5 +1,6 @@
 ﻿using Markdig;
 using Markdig.Syntax;
+using Markdown.ColorCode;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
@@ -12,9 +13,12 @@ namespace wkb.core.PageService
 		public WkbCore core;
 		Templator templator;
 		string ContentPath = "./wwwroot/";
+		MarkdownPipeline pipeline;
 		public WikiPageProvider(WkbCore core)
 		{
 			this.core = core;
+			pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions()
+				.UsePipeTables().UseGridTables().UseColorCode(HtmlFormatterType.Style).Build();
 			templator = new Templator(core);
 			core.configurationService.OnApplyConfiguration.Add(Configure);
 			Configure();
@@ -142,7 +146,6 @@ namespace wkb.core.PageService
 			sb.Append(Files);
 			return sb.ToString();
 		}
-
 		public string ObtainPage(PageTarget target)
 		{
 			Stopwatch sw = Stopwatch.StartNew();
@@ -171,7 +174,6 @@ namespace wkb.core.PageService
 			FileInfo fi = new FileInfo(path);
 
 			var md = File.ReadAllText(path);
-			MarkdownDocument markdownDocument = Markdown.Parse(md);
 			var infoFile = path + ".info";
 			string title = "";
 			if (File.Exists(infoFile))
@@ -180,9 +182,9 @@ namespace wkb.core.PageService
 			}
 			else
 			{
-				title = md.Substring(markdownDocument.First().Span.Start, markdownDocument.First().Span.Length).TrimStart('#').Trim();
+				title = fi.Name[..^3];
 			}
-			string l = markdownDocument.ToHtml();
+			string l = Markdig.Markdown.ToHtml(md,pipeline);
 			compound = new ComposeCompound()
 			{
 				Variables = new Dictionary<string, string>()

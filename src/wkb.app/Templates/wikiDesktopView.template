@@ -37,8 +37,15 @@
 			top: 15px;
 			bottom: 25px;
 		}
+		table, th, td {
+			border: 1px solid white;
+			border-collapse: collapse;
+		}
 		@media print{
-		
+			table, th, td {
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
 			.menudiv {
 				visibility: collapse;
 			}
