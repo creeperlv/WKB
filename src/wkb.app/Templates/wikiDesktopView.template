@@ -79,6 +79,9 @@
 			P{
 				color:black;
 			}
+			body{
+				color:black;
+			}
 			h1{
 				color:black;
 			}
