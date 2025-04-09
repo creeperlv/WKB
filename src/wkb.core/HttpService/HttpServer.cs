@@ -29,6 +29,10 @@ namespace wkb.core.HttpService
 			});
 			OnNewHttpRequest.Add((context) =>
 			{
+				if (!bool.TryParse(configService.Configuration.TryGetConfig(WkbConfigurationKeys.EnableMobileTemplate, "true"), out var useMobile))
+				{
+					useMobile = true;
+				}
 				if (context.Request.Url?.LocalPath == "/")
 				{
 					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false) && this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.AdvancedServer, false))
@@ -42,7 +46,12 @@ namespace wkb.core.HttpService
 							context.Response.Redirect("/firstSetup");
 						return true;
 					}
-					context.Response.Redirect("/content/index.md");
+					if (useMobile && (context.Request.UserAgent?.IndexOf("Mobile", StringComparison.InvariantCultureIgnoreCase) >= 0))
+					{
+						context.Response.Redirect("/m-content/index.md");
+					}
+					else
+						context.Response.Redirect("/content/index.md");
 					return true;
 				}
 				if (context.Request.Url?.LocalPath.StartsWith("/content/") ?? false)
@@ -60,7 +69,38 @@ namespace wkb.core.HttpService
 					var path = context.Request.Url?.LocalPath["/content/".Length..];
 					try
 					{
-						var content = core.pageEngine.ServeWikiPage(context, path ?? "index.md");
+						var content = core.pageEngine.ServeWikiPage(context, path ?? "index.md", false);
+						var data = Encoding.UTF8.GetBytes(content);
+						context.Response.ContentEncoding = Encoding.UTF8;
+						context.Response.OutputStream.Write(data);
+					}
+					catch (Exception e)
+					{
+						var data = Encoding.UTF8.GetBytes($"<html><body><h1>Internal Server Error</h1><p>{e}</p>");
+						context.Response.ContentEncoding = Encoding.UTF8;
+						context.Response.OutputStream.Write(data);
+					}
+					context.Response.OutputStream.Flush();
+					context.Response.OutputStream.Close();
+					return true;
+				}
+				else
+				if (context.Request.Url?.LocalPath.StartsWith("/m-content/") ?? false)
+				{
+					if (!this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.IsConfigured, false) && this.configService.Configuration.TryGetConfig(WkbConfigurationKeys.AdvancedServer, false))
+					{
+						if (context.Request.Url?.LocalPath.StartsWith("/firstSetup") ?? false)
+						{
+							return true;
+						}
+						else
+							context.Response.Redirect("/firstSetup");
+						return true;
+					}
+					var path = context.Request.Url?.LocalPath["/m-content/".Length..];
+					try
+					{
+						var content = core.pageEngine.ServeWikiPage(context, path ?? "index.md", true && useMobile);
 						var data = Encoding.UTF8.GetBytes(content);
 						context.Response.ContentEncoding = Encoding.UTF8;
 						context.Response.OutputStream.Write(data);
@@ -132,7 +172,7 @@ namespace wkb.core.HttpService
 							{
 								try
 								{
-									context.Response.StatusCode=500;
+									context.Response.StatusCode = 500;
 								}
 								catch (Exception)
 								{

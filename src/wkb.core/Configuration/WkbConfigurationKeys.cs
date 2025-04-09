@@ -10,5 +10,6 @@
 		public const string TemplateLocation = "TemplateLocation";
 		public const string ContentLocation = "ContentLocation";
 		public const string RawFileBufferSize = "RawFileBufferSize";
+		public const string EnableMobileTemplate= "EnableMobileTemplate";
 	}
 }

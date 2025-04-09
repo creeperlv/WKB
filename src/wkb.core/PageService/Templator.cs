@@ -28,13 +28,21 @@ namespace wkb.core.PageService
 			else
 				basePath = this.core.configurationService.Configuration.TryGetConfig(WkbConfigurationKeys.TemplateLocation, "./Templates");
 		}
-		public string FindFile(string name)
+		public string FindFile(string name, bool isMobile)
 		{
+			if (isMobile)
+				return Path.Combine(basePath, "mobile", name);
 			return Path.Combine(basePath, name);
 		}
-		public string GetTemplate(string name)
+		public string GetTemplate(string name, bool TryMobile = false)
 		{
-			var file = FindFile(name);
+			var file = FindFile(name, TryMobile);
+
+			if (File.Exists(file))
+			{
+				return File.ReadAllText(file);
+			}
+			file = FindFile(name, false);
 			if (File.Exists(file))
 			{
 				return File.ReadAllText(file);
@@ -44,7 +52,7 @@ namespace wkb.core.PageService
 	}
 	internal static class TemplateFiles
 	{
-		internal const string wikiDesktopView = "wikiDesktopView.template";
+		internal const string wikiView = "wikiView.template";
 		internal const string NavBarFolder = "Items/NavBarFolderItem.template";
 		internal const string NavBarFile = "Items/NavBarFileItem.template";
 	}

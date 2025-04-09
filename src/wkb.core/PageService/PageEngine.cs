@@ -20,11 +20,11 @@ namespace wkb.core.PageService
 				Providers[pageType] = provider;
 			}
 		}
-		public string ServeWikiPage(HttpListenerContext context, string path)
+		public string ServeWikiPage(HttpListenerContext context, string path,bool IsMobile)
 		{
 			if (Providers.TryGetValue(PageTypes.WikiPage, out var provider))
 			{
-				return provider.ObtainPage(new PageTarget(context, path));
+				return provider.ObtainPage(new PageTarget(context, path,IsMobile));
 			}
 			return "<html><body><h1>The server is not configured correctly";
 		}
@@ -33,7 +33,11 @@ namespace wkb.core.PageService
 	{
 		public HttpListenerContext context;
 		public string ProcessedURL;
-
+		public bool IsMobile = false;
+		public PageTarget(HttpListenerContext context, string processedURL, bool isMobile) : this(context, processedURL)
+		{
+			IsMobile = isMobile;
+		}
 		public PageTarget(HttpListenerContext context, string processedURL)
 		{
 			this.context = context;

@@ -21,7 +21,10 @@
 		<None Update="Templates\Items\NavBarFolderItem.template">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="Templates\wikiDesktopView.template">
+		<None Update="Templates\mobile\wikiView.template">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Templates\wikiView.template">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

@@ -155,8 +155,7 @@ namespace wkb.core.PageService
 			{
 				target.context.Response.Redirect("./index.md");
 			}
-			var file = templator.FindFile(TemplateFiles.wikiDesktopView);
-			var content = File.ReadAllText(file);
+			var content = templator.GetTemplate(TemplateFiles.wikiView, target.IsMobile);
 			Trace.WriteLine(path);
 			if (!File.Exists(path))
 			{
@@ -165,6 +164,7 @@ namespace wkb.core.PageService
 					Variables = new Dictionary<string, string>()
 					{
 						{ "TITLE","Not found!"},
+						{ "URL_PATH",target.ProcessedURL},
 						{"WIKI_CONTENT","Document not found!" },
 						{"WIKI_NAVBAR",GenerateFolderStructure(target,path)}
 					}
@@ -184,12 +184,13 @@ namespace wkb.core.PageService
 			{
 				title = fi.Name[..^3];
 			}
-			string l = Markdig.Markdown.ToHtml(md,pipeline);
+			string l = Markdig.Markdown.ToHtml(md, pipeline);
 			compound = new ComposeCompound()
 			{
 				Variables = new Dictionary<string, string>()
 				{
 					{ "TITLE",title},
+					{ "URL_PATH",target.ProcessedURL},
 					{ "CREATE_TIME",fi.CreationTime.ToLongDateString()},
 					{ "MODIFY_TIME",fi.LastWriteTime.ToLongDateString()},
 					{ "WIKI_CONTENT",l },

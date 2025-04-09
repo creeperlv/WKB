@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>$TITLE</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="//code.iconify.design/1/1.0.6/iconify.min.js"></script>
+	<link href="https://creeperlv.github.io/Styles/cldesignv2/cldesignv2.css" rel="stylesheet">
+	<script>
+		function ToggleMenu() {
+			var ifm = document.getElementById("menu");
+			var contentDiv = document.getElementById("content");
+			console.log(ifm.style.visibility);
+			if (ifm.style.visibility == 'collapse' || ifm.style.visibility == '') {
+				ifm.style.visibility = 'visible';
+				ifm.style.opacity = 1;
+				content.style.zIndex = "-1";
+			} else {
+				ifm.style.visibility = 'collapse';
+				ifm.style.opacity = 0;
+				content.style.zIndex = "auto";
+			}
+		}
+	</script>
+	<style>
+		code {
+			color: #F94;
+			background: #444;
+			padding: 2px 5px;
+			border-radius: 5px;
+			border: 1px solid #666;
+		}
+
+		pre > code {
+			color: white;
+			background: none;
+			padding: unset;
+			border-radius: 0px;
+			border: none;
+		}
+
+		body {
+			-webkit-print-color-adjust: exact !important;
+			print-color-adjust: exact !important;
+			transition-duration: 0.4s;
+		}
+
+		.menudiv {
+			transition-duration: 0.4s;
+			visibility: collapse;
+			position: fixed;
+			background: #333;
+			border-radius: 5px;
+			padding: 5px;
+			top: 50px;
+			bottom: 10px;
+			width: 90%;
+			box-shadow: #111 0px 10px 15px 1px;
+			z-index: 999;
+		}
+
+		.MainContent {
+			transition-duration: 0.4s;
+			border: none;
+			margin: 0px 10px;
+			margin-top: 50px;
+			padding: 0;
+			width: 90%;
+		}
+
+		img {
+			width: 95%;
+			margin-left: 2.5%;
+			margin-right: 2.5%;
+		}
+
+		.menudiv:hover {
+			top: 45px;
+			bottom: 15px;
+		}
+
+		table, th, td {
+			border: 1px solid white;
+			border-collapse: collapse;
+		}
+
+		@media print {
+			code {
+				color: #841;
+				background: #E8E8E8;
+				padding: 2px 5px;
+				border-radius: 5px;
+				border: 1px solid #DDD;
+			}
+
+			pre > code {
+				color: black;
+				background: none;
+				padding: unset;
+				border-radius: 0px;
+				border: none;
+			}
+
+			table, th, td {
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+
+			.menudiv {
+				visibility: collapse;
+			}
+
+			.MainContent {
+				transition-duration: 0.4s;
+				margin-left: 0%;
+				padding: 0px;
+				border: none;
+				width: 100%;
+			}
+
+			.AccentCardDiv {
+				background: #FFF;
+				box-shadow: #fff 0px 0px 0px 0px;
+				padding: 0px;
+				margin: 0px;
+			}
+
+				.AccentCardDiv:hover {
+					background: #FFF;
+					box-shadow: #fff 0px 0px 0px 0px;
+					padding: 0px;
+					margin: 0px;
+				}
+
+			.cardDiv {
+				background: #FFF;
+				box-shadow: #fff 0px 0px 0px 0px;
+				padding: 0px;
+				margin: 0px;
+			}
+
+				.cardDiv:hover {
+					background: #FFF;
+					box-shadow: #fff 0px 0px 0px 0px;
+					padding: 0px;
+					margin: 0px;
+				}
+
+			p {
+				color: black;
+			}
+
+			P {
+				color: black;
+			}
+
+			body {
+				color: black;
+			}
+
+			h1 {
+				color: black;
+			}
+
+			.hiddenWithPrint {
+				visibility: collapse;
+			}
+		}
+	</style>
+</head>
+<body style="display: flex; justify-content: center;">
+	<div class="menudiv" id="menu" style="overflow: auto; visibility:collapse;opacity:0;">
+		$WIKI_NAVBAR
+	</div>
+	<div style="position:fixed;width:100%;top:0px;display:flex;justify-content:center">
+		<button class="cldButton" onclick="ToggleMenu()" style="text-align: left;width:90%">≡ Menu</button>
+
+	</div>
+	<div class="MainContent" id="content">
+		<div class="AccentCardDiv" id="TitleDiv">
+			<p class="t2" id="Title">$TITLE</p>
+		</div>
+		<div class="cardDiv">
+			<p>Created at: $CREATE_TIME Last Modify: $MODIFY_TIME</p>
+		</div>
+		<div class="cardDiv">
+			$WIKI_CONTENT
+		</div>
+		<div class="cardDiv hiddenWithPrint">
+			<p>Generated in $COMPOSE_TIME ms.</p>
+			<p>
+				<a class="cldButton" href="/content/$URL_PATH">Desktop Version</a>
+			</p>
+		</div>
+	</div>
+</body>
+</html>

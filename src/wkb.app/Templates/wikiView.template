@@ -145,6 +145,9 @@
 		</div>
 		<div class="cardDiv hiddenWithPrint">
 			<p>Generated in $COMPOSE_TIME ms.</p>
+			<p>
+				<a class="cldButton" href="/m-content/$URL_PATH">Mobile Version</a>
+			</p>
 		</div>
 	</div>
 </body>
