@@ -172,18 +172,31 @@ namespace wkb.core.PageService
 				goto END;
 			}
 			FileInfo fi = new FileInfo(path);
-
+			bool IsIndexFile = fi.Name.StartsWith("index", StringComparison.InvariantCultureIgnoreCase);
 			var md = File.ReadAllText(path);
-			var infoFile = path + ".info";
 			string title = "";
+			var infoFile = path + ".info";
 			if (File.Exists(infoFile))
 			{
 				title = File.ReadAllText(infoFile);
 			}
 			else
 			{
+				if (IsIndexFile)
+				{
+					if (fi.Directory is not null)
+					{
+						var parentInfoFile = Path.Combine(fi.Directory.FullName, ".info");
+						if (File.Exists(parentInfoFile))
+						{
+							title = File.ReadAllText(parentInfoFile);
+							goto AFTER_TITLE;
+						}
+					}
+				}
 				title = fi.Name[..^3];
 			}
+		AFTER_TITLE:
 			string l = Markdig.Markdown.ToHtml(md, pipeline);
 			compound = new ComposeCompound()
 			{
