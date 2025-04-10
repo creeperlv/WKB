@@ -25,6 +25,11 @@
 		}
 	</script>
 	<style>
+		.cldButton {
+			margin: 3px 5px;
+			display: flex;
+			justify-content: center;
+		}
 		code {
 			color: #F94;
 			background: #444;
@@ -177,7 +182,7 @@
 		$WIKI_NAVBAR
 	</div>
 	<div class="hiddenWithPrint" style="position:fixed;width:100%;top:0px;display:flex;justify-content:left">
-		<button class="cldButton" onclick="ToggleMenu()"><span class="iconify" data-icon="mdi-folder-outline"></span></button>
+		<button class="cldButton" onclick="ToggleMenu()"><span class="iconify" data-icon="mdi-menu"></span></button> 
 		<a class="cldButton" href="../"><span class="iconify" data-icon="mdi-folder-arrow-left-outline"></span></a>
 	</div>
 	<div class="MainContent" id="content">
