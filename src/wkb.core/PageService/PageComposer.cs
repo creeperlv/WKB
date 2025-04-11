@@ -12,15 +12,18 @@ namespace wkb.core.PageService
 		public static bool UseNewComposer = true;
 		static PageComposer()
 		{
-			validateChars = new char[52];
+			List<char> list = new List<char>();
 			for (int i = 0; i < 26; i++)
 			{
-				validateChars[i] = (char)((int)'a' + i);
+				list.Add((char)((int)'a' + i));
 			}
 			for (int i = 0; i < 26; i++)
 			{
-				validateChars[26 + i] = (char)((int)'A' + i);
+				list.Add((char)((int)'A' + i));
 			}
+			list.Add('_');
+			validateChars = list.ToArray();
+
 		}
 		public static string ComposeFile(string file, ComposeCompound compound, bool ExposeEnvironmentVariables = false)
 		{
@@ -79,7 +82,7 @@ namespace wkb.core.PageService
 									goto END_ITERATION;
 								}
 							}
-							stringBuilder.Append(pageContent.AsSpan(id, i - id - 1));
+							stringBuilder.Append(pageContent.AsSpan(id, i - id));
 							Index = i;
 							goto END_ITERATION;
 						}
