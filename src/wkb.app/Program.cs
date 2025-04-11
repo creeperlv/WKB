@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using wkb.core;
 using wkb.core.HttpService;
+using wkb.core.PageService;
 
 namespace wkb.app;
 
@@ -17,7 +18,6 @@ class Program
 				case "--create-config-file":
 					configService.Save();
 					return;
-					break;
 				default:
 					break;
 			}

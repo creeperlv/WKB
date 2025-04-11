@@ -19,7 +19,7 @@ namespace wkb.core.VersionControl
 
 		public void Init(string KBPath)
 		{
-			throw new NotImplementedException();
+			this.KBPath = KBPath;
 		}
 	}
 }
