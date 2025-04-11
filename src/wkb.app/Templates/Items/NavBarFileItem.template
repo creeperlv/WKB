@@ -1,1 +1,1 @@
-<a href="$ITEM_URL"/><li></span>$ITEM_NAME</li></a>
+<a href="$ITEM_URL"/><li><span class="iconify" data-icon="mdi-file-document-outline"></span>$ITEM_NAME</li></a>
