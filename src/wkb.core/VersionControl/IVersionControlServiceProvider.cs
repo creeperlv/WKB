@@ -11,6 +11,7 @@ namespace wkb.core.VersionControl
 	{
 		void Init(string KBPath);
 		void Commit(User u, string message);
+		IEnumerable<(string, string)> History(string path, int StartIndex, int Length);
 	}
 	public enum VersionControlService
 	{
