@@ -1,15 +1,16 @@
 ﻿using System.Net;
+using System.Text;
 using wkb.core.Configuration;
 
 namespace wkb.core.PageService
 {
 	public class PageEngine
 	{
-		public ConfigurationService service;
+		public ConfigurationService configService;
 
 		public PageEngine(ConfigurationService service)
 		{
-			this.service = service;
+			this.configService = service;
 		}
 
 		public Dictionary<PageTypes, IPageProvider> Providers = new Dictionary<PageTypes, IPageProvider>();

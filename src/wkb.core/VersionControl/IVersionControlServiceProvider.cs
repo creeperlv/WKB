@@ -9,6 +9,7 @@ namespace wkb.core.VersionControl
 {
 	public interface IVersionControlServiceProvider
 	{
+		bool IsAvailable();
 		void Init(string KBPath);
 		void Commit(User u, string message);
 		IEnumerable<(string, string)> History(string path, int StartIndex, int Length);

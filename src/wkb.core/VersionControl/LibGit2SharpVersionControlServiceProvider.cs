@@ -15,20 +15,26 @@ namespace wkb.core.VersionControl
 			var sig = new Signature(u.DisplayName, u.Email, DateTime.Now);
 			repository.Commit(message, sig, sig);
 		}
-		public IEnumerable<(string,string)> History(string path, int StartIndex, int Length)
+		public IEnumerable<(string, string)> History(string path, int StartIndex, int Length)
 		{
-			if (KBPath is null)yield break;
+			if (KBPath is null) yield break;
 			var repo = LibGit2Sharp.Repository.Discover(KBPath);
-			if (repo == null) yield break; 
+			if (repo == null) yield break;
 			using Repository repository = new Repository(repo);
-			foreach(var entry in repository.Commits.QueryBy(path).Take(new Range(StartIndex, StartIndex + Length)))
+			foreach (var entry in repository.Commits.QueryBy(path).Take(new Range(StartIndex, StartIndex + Length)))
 			{
-				yield return (entry.Path,entry.Commit.Sha);
+				yield return (entry.Path, entry.Commit.Sha);
 			}
 		}
 		public void Init(string KBPath)
 		{
 			this.KBPath = KBPath;
+		}
+
+		public bool IsAvailable()
+		{
+			if (KBPath is null) return false;
+			return LibGit2Sharp.Repository.Discover(KBPath) != null;
 		}
 	}
 }
