@@ -190,7 +190,7 @@
 			<p class="t2" id="Title">$TITLE</p>
 		</div>
 		<div class="cardDiv">
-			<p>Created at: $CREATE_TIME Last Modify: $MODIFY_TIME</p>
+			<p>Created at: $$CREATE_DATE $CREATE_TIME Last Modify: $MODIFY_DATE $MODIFY_TIME</p>
 		</div>
 		<div class="cardDiv">
 			$WIKI_CONTENT

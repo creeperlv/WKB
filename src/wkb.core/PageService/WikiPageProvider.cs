@@ -203,8 +203,10 @@ namespace wkb.core.PageService
 				{
 					{ "TITLE",title},
 					{ "URL_PATH",target.ProcessedURL},
-					{ "CREATE_TIME",fi.CreationTime.ToLongDateString()},
-					{ "MODIFY_TIME",fi.LastWriteTime.ToLongDateString()},
+					{ "CREATE_DATE",fi.CreationTime.ToLongDateString()},
+					{ "MODIFY_DATE",fi.LastWriteTime.ToLongDateString()},
+					{ "CREATE_TIME",fi.CreationTime.ToLongTimeString()},
+					{ "MODIFY_TIME",fi.LastWriteTime.ToLongTimeString()},
 					{ "WIKI_CONTENT",l },
 					{ "WIKI_NAVBAR",GenerateFolderStructure(target,path)}
 				}
