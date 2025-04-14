@@ -156,7 +156,6 @@ namespace wkb.core.PageService
 				target.context.Response.Redirect("./index.md");
 			}
 			var content = templator.GetTemplate(TemplateFiles.wikiView, target.IsMobile);
-			Trace.WriteLine(path);
 			if (!File.Exists(path))
 			{
 				compound = new ComposeCompound()
