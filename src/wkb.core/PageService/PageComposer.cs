@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using wkb.core.Utilities;
 
 namespace wkb.core.PageService
 {
@@ -10,6 +13,7 @@ namespace wkb.core.PageService
 	{
 		static char[] validateChars;
 		public static bool UseNewComposer = true;
+		internal static Dictionary<string, string> GlobalVariables = new();
 		static PageComposer()
 		{
 			List<char> list = new List<char>();
@@ -23,6 +27,18 @@ namespace wkb.core.PageService
 			}
 			list.Add('_');
 			validateChars = list.ToArray();
+			
+			GlobalVariables.Add("CPU_ARCH", RuntimeInformation.ProcessArchitecture.ToString());
+			GlobalVariables.Add("DOTNET_FMWK", RuntimeInformation.FrameworkDescription);
+			GlobalVariables.Add("CPU_COUNT", Environment.ProcessorCount.ToString());
+			GlobalVariables.Add("SYS_ARCH", RuntimeInformation.OSArchitecture.ToString());
+			GlobalVariables.Add("SYS_DESC", RuntimeInformation.OSDescription);
+			GlobalVariables.Add("PLATFORM", Environment.OSVersion.Platform.ToString());
+			GlobalVariables.Add("OS_VERSION", Environment.OSVersion.Version.ToString());
+			GlobalVariables.Add("OS_SP", Environment.OSVersion.ServicePack.ToString());
+			GlobalVariables.Add("OS_NAME", EnvironmentUtils.GetOSName());
+			GlobalVariables.Add("PLAT_NAME", EnvironmentUtils.GetPlatformName());
+			GlobalVariables.Add("RT_MODE", EnvironmentUtils.GetRuntimeMode());
 
 		}
 		public static string ComposeFile(string file, ComposeCompound compound, bool ExposeEnvironmentVariables = false)
@@ -66,22 +82,28 @@ namespace wkb.core.PageService
 						if (!validateChars.Contains(pageContent[i]))
 						{
 							string key = pageContent.Substring(id + 1, i - id - 1);
-							if (compound.Variables.ContainsKey(key))
+							if (compound.TryGetVariable(key, out var value, ExposeEnvironmentVariables))
 							{
-								stringBuilder.Append(compound.Variables[key]);
+								stringBuilder.Append(value);
 								Index = i;
 								goto END_ITERATION;
 							}
-							if (ExposeEnvironmentVariables)
-							{
-								var value = Environment.GetEnvironmentVariable(key);
-								if (value is not null)
-								{
-									stringBuilder.Append(value);
-									Index = i;
-									goto END_ITERATION;
-								}
-							}
+							//if (compound.Variables.ContainsKey(key))
+							//{
+							//	stringBuilder.Append(compound.Variables[key]);
+							//	Index = i;
+							//	goto END_ITERATION;
+							//}
+							//if (ExposeEnvironmentVariables)
+							//{
+							//	var value = Environment.GetEnvironmentVariable(key);
+							//	if (value is not null)
+							//	{
+							//		stringBuilder.Append(value);
+							//		Index = i;
+							//		goto END_ITERATION;
+							//	}
+							//}
 							stringBuilder.Append(pageContent.AsSpan(id, i - id));
 							Index = i;
 							goto END_ITERATION;
@@ -89,20 +111,26 @@ namespace wkb.core.PageService
 					}
 					{
 						var k2 = pageContent.Substring(id + 1);
-						if (compound.Variables.ContainsKey(k2))
+
+						if (compound.TryGetVariable(k2, out var value, ExposeEnvironmentVariables))
 						{
 							stringBuilder.Append(compound.Variables[k2]);
 							break;
 						}
-						if (ExposeEnvironmentVariables)
-						{
-							var value = Environment.GetEnvironmentVariable(k2);
-							if (value is not null)
-							{
-								stringBuilder.Append(value);
-								break;
-							}
-						}
+						//	if (compound.Variables.ContainsKey(k2))
+						//{
+						//	stringBuilder.Append(compound.Variables[k2]);
+						//	break;
+						//}
+						//if (ExposeEnvironmentVariables)
+						//{
+						//	var value = Environment.GetEnvironmentVariable(k2);
+						//	if (value is not null)
+						//	{
+						//		stringBuilder.Append(value);
+						//		break;
+						//	}
+						//}
 						stringBuilder.Append('$');
 						stringBuilder.Append(k2);
 						break;
@@ -132,17 +160,24 @@ namespace wkb.core.PageService
 	public class ComposeCompound
 	{
 		public Dictionary<string, string> Variables = [];
-		public string TryGetVariable(string key, bool useEnvironmentVariable = false)
+		public bool TryGetVariable(string key, [MaybeNullWhen(false)] out string result, bool useEnvironmentVariable = false)
 		{
-			if (Variables.TryGetValue(key, out var vv))
+			if (Variables.TryGetValue(key, out result))
 			{
-				return vv;
+				return true;
+			}
+			if (PageComposer.GlobalVariables.TryGetValue(key, out result))
+			{
+				return true;
 			}
 			if (useEnvironmentVariable)
 			{
-				return Environment.GetEnvironmentVariable(key) ?? key;
+				result = Environment.GetEnvironmentVariable(key);
+				return result != null;
 			}
-			return key;
+			result = null;
+			return false;
+
 		}
 	}
 	public enum PageTypes
