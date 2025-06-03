@@ -55,6 +55,7 @@
 		}
 
 		.menudiv {
+			view-transition-name: menudiv;
 			transition-duration: 0.4s;
 			visibility: collapse;
 			position: fixed;
@@ -192,13 +193,13 @@
 		<div class="cardDiv">
 			<p>Created at: $CREATE_DATE $CREATE_TIME Last Modify: $MODIFY_DATE $MODIFY_TIME</p>
 		</div>
-		<div class="cardDiv">
+		<div class="cardDiv" style="view-transition-name: content;">
 			$WIKI_CONTENT
 		</div>
-		<div class="cardDiv hiddenWithPrint">
+		<div class="cardDiv hiddenWithPrint" style="view-transition-name: foot;">
 			<p>Generated in $COMPOSE_TIME ms.</p>
 			<p>
-				<a class="cldButton" href="/content/$URL_PATH">Desktop Version</a>
+				<a class="cldButton" href="/content/$URL_PATH" style="view-transition-name: modebutton;">Desktop Version</a>
 			</p>
 		</div>
 	</div>
