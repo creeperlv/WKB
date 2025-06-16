@@ -6,6 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="//code.iconify.design/1/1.0.6/iconify.min.js"></script>
 	<link href="https://creeperlv.github.io/Styles/cldesignv2/cldesignv2.css" rel="stylesheet">
+	<script type="text/javascript" id="MathJax-script" async
+			src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+	</script>
 	<script>
 		function ToggleMenu() {
 			var ifm = document.getElementById("menu");
@@ -14,12 +17,12 @@
 			if (ifm.style.visibility == 'collapse' || ifm.style.visibility == '') {
 				ifm.style.visibility = 'visible';
 				ifm.style.opacity = 1;
-				ifm.style.marginLeft="0%";
+				ifm.style.marginLeft = "0%";
 				content.style.zIndex = "-1";
 			} else {
 				ifm.style.visibility = 'collapse';
 				ifm.style.opacity = 0;
-				ifm.style.marginLeft="-90%";
+				ifm.style.marginLeft = "-90%";
 				content.style.zIndex = "auto";
 			}
 		}
@@ -30,6 +33,7 @@
 			display: flex;
 			justify-content: center;
 		}
+
 		code {
 			color: #F94;
 			background: #444;
@@ -37,16 +41,18 @@
 			border-radius: 5px;
 			border: 1px solid #666;
 		}
-		pre{
+
+		pre {
 			overflow: auto;
 		}
-		pre > code {
-			color: white;
-			background: none;
-			padding: unset;
-			border-radius: 0px;
-			border: none;
-		}
+
+			pre > code {
+				color: white;
+				background: none;
+				padding: unset;
+				border-radius: 0px;
+				border: none;
+			}
 
 		body {
 			-webkit-print-color-adjust: exact !important;

@@ -5,6 +5,9 @@
 	<title>$TITLE</title>
 	<script src="//code.iconify.design/1/1.0.6/iconify.min.js"></script>
 	<link href="https://creeperlv.github.io/Styles/cldesignv2/cldesignv2.css" rel="stylesheet">
+	<script type="text/javascript" id="MathJax-script" async
+			src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+	</script>
 	<style>
 		code {
 			color: #F94;
@@ -13,21 +16,25 @@
 			border-radius: 5px;
 			border: 1px solid #666;
 		}
-		pre{
+
+		pre {
 			overflow: auto;
 		}
-		pre>code {
-			color: white;
-			background: none;
-			padding: unset;
-			border-radius: 0px;
-			border: none;
-		}
-		body{
-			-webkit-print-color-adjust:exact !important;
-			print-color-adjust:exact !important;
+
+			pre > code {
+				color: white;
+				background: none;
+				padding: unset;
+				border-radius: 0px;
+				border: none;
+			}
+
+		body {
+			-webkit-print-color-adjust: exact !important;
+			print-color-adjust: exact !important;
 			transition-duration: 0.4s;
 		}
+
 		.menudiv {
 			view-transition-name: menudiv;
 			visibility: visible;
@@ -42,6 +49,7 @@
 			padding: 5px;
 			box-shadow: #111 0px 10px 15px 1px;
 		}
+
 		.MainContent {
 			transition-duration: 0.4s;
 			margin-left: 17%;
@@ -49,20 +57,24 @@
 			border: none;
 			width: 78%;
 		}
-		img{
+
+		img {
 			width: 95%;
-			margin-left:2.5%;
-			margin-right:2.5%;
+			margin-left: 2.5%;
+			margin-right: 2.5%;
 		}
+
 		.menudiv:hover {
 			top: 15px;
 			bottom: 25px;
 		}
+
 		table, th, td {
 			border: 1px solid white;
 			border-collapse: collapse;
 		}
-		@media print{
+
+		@media print {
 			code {
 				color: #841;
 				background: #E8E8E8;
@@ -70,20 +82,24 @@
 				border-radius: 5px;
 				border: 1px solid #DDD;
 			}
-			pre>code {
+
+			pre > code {
 				color: black;
 				background: none;
 				padding: unset;
 				border-radius: 0px;
 				border: none;
 			}
+
 			table, th, td {
 				border: 1px solid black;
 				border-collapse: collapse;
 			}
+
 			.menudiv {
 				visibility: collapse;
 			}
+
 			.MainContent {
 				transition-duration: 0.4s;
 				margin-left: 0%;
@@ -91,43 +107,52 @@
 				border: none;
 				width: 100%;
 			}
-			.AccentCardDiv{
+
+			.AccentCardDiv {
 				background: #FFF;
 				box-shadow: #fff 0px 0px 0px 0px;
 				padding: 0px;
 				margin: 0px;
 			}
-			.AccentCardDiv:hover {
+
+				.AccentCardDiv:hover {
+					background: #FFF;
+					box-shadow: #fff 0px 0px 0px 0px;
+					padding: 0px;
+					margin: 0px;
+				}
+
+			.cardDiv {
 				background: #FFF;
 				box-shadow: #fff 0px 0px 0px 0px;
 				padding: 0px;
 				margin: 0px;
 			}
-			.cardDiv{
-				background: #FFF;
-				box-shadow: #fff 0px 0px 0px 0px;
-				padding: 0px;
-				margin: 0px;
+
+				.cardDiv:hover {
+					background: #FFF;
+					box-shadow: #fff 0px 0px 0px 0px;
+					padding: 0px;
+					margin: 0px;
+				}
+
+			p {
+				color: black;
 			}
-			.cardDiv:hover {
-				background: #FFF;
-				box-shadow: #fff 0px 0px 0px 0px;
-				padding: 0px;
-				margin: 0px;
+
+			P {
+				color: black;
 			}
-			p{
-				color:black;
+
+			body {
+				color: black;
 			}
-			P{
-				color:black;
+
+			h1 {
+				color: black;
 			}
-			body{
-				color:black;
-			}
-			h1{
-				color:black;
-			}
-			.hiddenWithPrint{
+
+			.hiddenWithPrint {
 				visibility: collapse;
 			}
 		}
