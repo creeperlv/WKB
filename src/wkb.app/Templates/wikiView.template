@@ -19,6 +19,9 @@
 
 		pre {
 			overflow: auto;
+			background: #101010;
+			border-radius: 5px;
+			padding: 10px;
 		}
 
 			pre > code {
